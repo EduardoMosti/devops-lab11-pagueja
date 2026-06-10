@@ -1,4 +1,4 @@
-name: Deploy Fintech
+name: CI-CD Fintech
 
 on:
   push:
@@ -6,15 +6,27 @@ on:
       - main
 
 jobs:
+
   build:
+
+    name: Build e Validacao
+
     runs-on: ubuntu-latest
 
     steps:
 
-      - name: Checkout
+      - name: Checkout do Codigo
         uses: actions/checkout@v4
 
       - name: Validar Arquivos
         run: |
-          echo "Pipeline executada com sucesso"
+          echo "Arquivos encontrados:"
           ls -la
+
+      - name: Verificar index.html
+        run: |
+          test -f index.html
+
+      - name: Build Docker
+        run: |
+          docker build -t pagaja .
