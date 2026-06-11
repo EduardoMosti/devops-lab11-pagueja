@@ -30,3 +30,45 @@ jobs:
       - name: Build Docker
         run: |
           docker build -t pagaja .
+
+  deploy:
+
+    name: Deploy AWS EC2
+
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+
+      - name: Deploy na EC2
+        uses: appleboy/ssh-action@v1.0.3
+
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+
+          script: |
+
+            cd /home/ubuntu
+
+            if [ ! -d devops-lab11-pagueja ]; then
+              git clone https://github.com/Helinho7/devops-lab11-pagueja.git
+            fi
+
+            cd devops-lab11-pagueja
+
+            git pull
+
+            sudo docker stop pagaja || true
+            sudo docker rm pagaja || true
+
+            sudo docker build -t pagaja .
+
+            sudo docker run -d \
+              --name pagaja \
+              -p 80:80 \
+              pagaja
+
+            sudo docker ps
