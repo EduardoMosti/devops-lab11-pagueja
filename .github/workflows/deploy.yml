@@ -69,6 +69,7 @@ jobs:
             sudo docker run -d \
               --name pagaja \
               -p 80:80 \
+              --restart unless-stopped \
               pagaja
 
             sudo docker ps
